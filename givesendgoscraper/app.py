@@ -60,7 +60,7 @@ def startup_event() -> None:
 
     async def task() -> None:
         """Run the task."""
-        await scraper_task("maryamhenein")
+        await scraper_task(GIVE_SEND_GO_ID)
 
     # run the task in the background
     asyncio.create_task(task())
