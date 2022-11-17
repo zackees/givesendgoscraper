@@ -1,4 +1,2 @@
 include requirements.txt
 include requirements.testing.txt
-include video_server/www/index.html
-include video_server/www/preview.jpg

@@ -7,13 +7,15 @@
 import uvicorn  # type: ignore
 
 import os
-from video_server.version import VERSION
+from givesendgoscraper.version import VERSION
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from fastapi.responses import RedirectResponse, PlainTextResponse, JSONResponse
-
+from bs4 import BeautifulSoup
 from keyvalue_sqlite import KeyValueSqlite
+
+from givesendgoscraper.scraper import scrape_givesendgo
 
 STARTUP_DATETIME = datetime.now()
 
@@ -26,7 +28,14 @@ os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 def app_description() -> str:
     """Get the app description."""
-    return f"Givesendgoscraper v{VERSION}, started at {STARTUP_DATETIME}"
+    lines = []
+    lines.append("# Givesendgoscraper")
+    lines.append("  * Version: " + VERSION)
+    lines.append("  * Started at: " + str(STARTUP_DATETIME))
+    # os.env
+    for key, value in os.environ.items():
+        lines.append(f"  * {key}: {value}")
+    return "\n".join(lines)
 
 
 app = FastAPI(
@@ -62,6 +71,15 @@ async def favicon() -> RedirectResponse:
 
 
 @app.get("/get")
-async def log_file(request: Request) -> JSONResponse:
-    """Returns the log file."""
-    return {"todo": "todo"}
+async def get(gsg_id: str | None = "maryamhenein") -> JSONResponse:
+    """TODO - Add description."""
+    url = f"https://www.givesendgo.com/{gsg_id}"
+    try:
+        return scrape_givesendgo(gsg_id)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)},
+        )

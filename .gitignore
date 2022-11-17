@@ -136,7 +136,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
+givesendgoscraper/.wdm
 
 # Mac specific ignores
 .DS_Store

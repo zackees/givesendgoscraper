@@ -19,6 +19,7 @@ AUTHOR = "Zach Vorhies"
 REQUIRES_PYTHON = ">=3.10.4"
 VERSION = None
 
+
 # The text of the README file
 with open(os.path.join(HERE, "README.md"), encoding="utf-8", mode="rt") as fd:
     LONG_DESCRIPTION = fd.read()
@@ -26,7 +27,7 @@ with open(os.path.join(HERE, "README.md"), encoding="utf-8", mode="rt") as fd:
 with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") as fd:
     REQUIREMENTS = [line.strip() for line in fd.readlines() if line.strip()]
 
-with open(os.path.join(HERE, "src", "version.py"), encoding="utf-8", mode="rt") as fd:
+with open(os.path.join(HERE, NAME, "version.py"), encoding="utf-8", mode="rt") as fd:
     for line in fd.readlines():
         if line.startswith("VERSION"):
             VERSION = line.split("=")[1].strip().strip('"')

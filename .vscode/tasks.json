@@ -23,7 +23,7 @@
         {
             "label": "Run Docker",
             "type": "shell",
-            "command": "./run_docker.sh",
+            "command": "bash ./run_docker.sh",
             "group": "build",
             "options": {
                 "cwd": "${workspaceRoot}"
