@@ -1,1 +1,1 @@
-uvicorn --host 0.0.0.0 --port 80 --workers 8 --forwarded-allow-ips=* givesendgoscraper.app:app
+uvicorn --host 0.0.0.0 --port 80 --workers 1 --forwarded-allow-ips=* givesendgoscraper.app:app

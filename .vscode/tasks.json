@@ -6,7 +6,7 @@
         {
             "label": "Run Local",
             "type": "shell",
-            "command": ". activate.sh && ./unicorn.sh",
+            "command": ". activate.sh && ./entry_point.sh",
             "group": "build",
             "options": {
                 "cwd": "${workspaceRoot}"

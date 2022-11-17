@@ -4,23 +4,23 @@
 
 # pylint: disable=fixme,broad-except,logging-fstring-interpolation,too-many-locals,redefined-builtin,invalid-name,too-many-branches,too-many-return-statements
 
+import asyncio
 import os
-from givesendgoscraper.version import VERSION
+import traceback
+from datetime import datetime
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
 from fastapi.responses import RedirectResponse, JSONResponse
-from keyvalue_sqlite import KeyValueSqlite
 
 from givesendgoscraper.scraper import scrape_givesendgo
+from givesendgoscraper.scraper_task import scraper_task, get_campaign_data, CampaignData
+from givesendgoscraper.version import VERSION
 
 STARTUP_DATETIME = datetime.now()
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_ROOT = os.path.join(PROJECT_ROOT, "data")
-DB_PATH = f"{PROJECT_ROOT}/data/db.sqlite"
+IS_TEST = True
 
-os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 def app_description() -> str:
     """Get the app description."""
@@ -28,9 +28,9 @@ def app_description() -> str:
     lines.append("# Givesendgoscraper")
     lines.append("  * Version: " + VERSION)
     lines.append("  * Started at: " + str(STARTUP_DATETIME))
-    # os.env
-    for key, value in os.environ.items():
-        lines.append(f"  * {key}: {value}")
+    if IS_TEST:
+        for key, value in os.environ.items():
+            lines.append(f"  * {key}: {value}")
     return "\n".join(lines)
 
 
@@ -53,6 +53,18 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+def startup_event() -> None:
+    """Adds the background task to scrape the campaign."""
+
+    async def task() -> None:
+        """Run the task."""
+        await scraper_task("maryamhenein")
+
+    # run the task in the background
+    asyncio.create_task(task())
+
+
 @app.get("/", include_in_schema=False)
 async def index() -> RedirectResponse:
     """By default redirect to the fastapi docs."""
@@ -67,16 +79,34 @@ async def favicon() -> RedirectResponse:
 
 
 @app.get("/get")
-async def get(gsg_id: str | None = "maryamhenein") -> JSONResponse:
-    """TODO - Add description."""
-    url = f"https://www.givesendgo.com/{gsg_id}"
+async def get() -> JSONResponse:
+    """Get's the current campaign data."""
     try:
-        return scrape_givesendgo(gsg_id)
-    except Exception as e:
-        import traceback
-        stack_trace = traceback.format_exc()
+        data: CampaignData = get_campaign_data()
         return JSONResponse(
-            status_code=500,
-            content={"error": str(e)},
-            stacktrace=stack_trace
+            status_code=200, content={"goal": data.goal, "raised": data.raised}
         )
+    except Exception as e:  # pylint: disable=broad-except
+        stack_trace = traceback.format_exc()
+        payload = {
+            "error": str(e),
+            "stack_trace": stack_trace,
+        }
+        return JSONResponse(status_code=500, content=payload)
+
+
+if IS_TEST:
+
+    @app.get("/test")
+    async def test_scrape(gsg_id: str = "maryamhenein") -> JSONResponse:
+        """Test scraping"""
+        try:
+            data = scrape_givesendgo(gsg_id)
+            return JSONResponse(status_code=200, content=data)
+        except Exception as e:  # pylint: disable=broad-except
+            stack_trace = traceback.format_exc()
+            payload = {
+                "error": str(e),
+                "stack_trace": stack_trace,
+            }
+            return JSONResponse(status_code=500, content=payload)

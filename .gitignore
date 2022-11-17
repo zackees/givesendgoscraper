@@ -136,6 +136,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.wdm
 givesendgoscraper/.wdm
 tests/.wdm
 

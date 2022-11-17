@@ -2,8 +2,8 @@
 Module for scraping givesendgo pages.
 """
 
-from bs4 import BeautifulSoup
-from open_webdriver import open_webdriver
+from bs4 import BeautifulSoup  # type: ignore
+from open_webdriver import open_webdriver  # type: ignore
 
 
 def _parse_html(text: str) -> dict[str, str]:
@@ -47,6 +47,7 @@ def _get_html(gsg_id: str) -> str:
         # print driver.page_source
         return driver.page_source
 
+
 def scrape_givesendgo(gsg_id: str) -> dict:
     """Scrape the givesendgo page."""
     text = _get_html(gsg_id)
@@ -54,12 +55,12 @@ def scrape_givesendgo(gsg_id: str) -> dict:
     return data
 
 
-def main() -> None:
+def main() -> dict:
     """Run the main function."""
     gsg_id = "maryamhenein"
     result = scrape_givesendgo(gsg_id)
     return result
 
+
 if __name__ == "__main__":
-    result = main()
-    print(result)
+    print(main())
