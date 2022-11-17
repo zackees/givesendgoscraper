@@ -4,15 +4,12 @@
 
 # pylint: disable=fixme,broad-except,logging-fstring-interpolation,too-many-locals,redefined-builtin,invalid-name,too-many-branches,too-many-return-statements
 
-import uvicorn  # type: ignore
-
 import os
 from givesendgoscraper.version import VERSION
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
-from fastapi.responses import RedirectResponse, PlainTextResponse, JSONResponse
-from bs4 import BeautifulSoup
+from fastapi.responses import RedirectResponse, JSONResponse
 from keyvalue_sqlite import KeyValueSqlite
 
 from givesendgoscraper.scraper import scrape_givesendgo
@@ -24,7 +21,6 @@ DATA_ROOT = os.path.join(PROJECT_ROOT, "data")
 DB_PATH = f"{PROJECT_ROOT}/data/db.sqlite"
 
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-
 
 def app_description() -> str:
     """Get the app description."""
@@ -78,8 +74,9 @@ async def get(gsg_id: str | None = "maryamhenein") -> JSONResponse:
         return scrape_givesendgo(gsg_id)
     except Exception as e:
         import traceback
-        traceback.print_exc()
+        stack_trace = traceback.format_exc()
         return JSONResponse(
             status_code=500,
             content={"error": str(e)},
+            stacktrace=stack_trace
         )

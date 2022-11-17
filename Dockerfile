@@ -3,7 +3,7 @@ FROM python:3.10.5-bullseye
 # Might be necessary.
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-# All the useful binary commands.
+# Install dependencies to allow open-webdriver
 RUN apt-get update && apt-get install -y --force-yes --no-install-recommends \
     apt-transport-https \
     ca-certificates \
@@ -12,13 +12,15 @@ RUN apt-get update && apt-get install -y --force-yes --no-install-recommends \
     libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 fonts-liberation \
     libnss3 lsb-release xdg-utils wget libgbm-dev
 ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+ENV DISPLAY=:99
+
 WORKDIR /app
 RUN pip install --upgrade pip
 # for sending files to other devices
 COPY requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
-COPY . .
+COPY --chown=root:root . .
 RUN python -m pip install -e .
 # Expose the port and then launch the app.
-ENV DISPLAY=:99
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "80", "givesendgoscraper.app:app"]
+
+CMD ["/bin/bash", "unicorn.sh"]
