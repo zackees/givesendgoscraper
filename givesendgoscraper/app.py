@@ -19,7 +19,8 @@ from givesendgoscraper.version import VERSION
 
 STARTUP_DATETIME = datetime.now()
 
-IS_TEST = True
+IS_TEST = os.environ.get("IS_TEST", "0") == "1"
+GIVE_SEND_GO_ID = os.environ.get("GIVE_SEND_GO_ID", "maryamhenein")
 
 
 def app_description() -> str:
@@ -98,7 +99,7 @@ async def get() -> JSONResponse:
 if IS_TEST:
 
     @app.get("/test")
-    async def test_scrape(gsg_id: str = "maryamhenein") -> JSONResponse:
+    async def test_scrape(gsg_id: str = GIVE_SEND_GO_ID) -> JSONResponse:
         """Test scraping"""
         try:
             data = scrape_givesendgo(gsg_id)
