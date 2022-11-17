@@ -23,4 +23,4 @@ COPY --chown=root:root . .
 RUN python -m pip install -e .
 # Expose the port and then launch the app.
 
-CMD ["/bin/bash", "unicorn.sh"]
+CMD ["/bin/bash", "entry_point.sh"]
