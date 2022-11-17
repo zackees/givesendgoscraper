@@ -2,6 +2,7 @@
 Periodically scrapes the given givesendgo campaign and saves the data to a database.
 """
 import asyncio
+import time
 from dataclasses import dataclass
 from givesendgoscraper.scraper import scrape_givesendgo
 
@@ -42,8 +43,9 @@ async def scraper_task(gsg_id) -> None:
             CAMPAIGN_DATA.raised = data["raised"]
         except Exception as exc:  # pylint: disable=broad-except
             print(exc)
-        sleep = DEFAULT_SLEEP
-        if TRIGGERED:
-            sleep = FAST_SLEEP
-            TRIGGERED = False
-        await asyncio.sleep(sleep)
+        long_future_time = time.time() + DEFAULT_SLEEP
+        while time.time() < long_future_time:
+            if TRIGGERED:
+                TRIGGERED = False
+                break  # break out of the inner loop
+            await asyncio.sleep(FAST_SLEEP)
