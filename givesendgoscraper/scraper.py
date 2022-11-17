@@ -16,6 +16,7 @@ def _parse_html(text: str) -> dict[str, str]:
     text = text.replace(" :", ":")
     text = text.replace(":\n", ":")
     text = text.replace("$ ", "$")
+    text = text.replace("USD", "")
     text = text.strip()
     while "  " in text:
         text = text.replace("  ", " ")
