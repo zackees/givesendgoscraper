@@ -5,6 +5,8 @@ Module for scraping givesendgo pages.
 from bs4 import BeautifulSoup  # type: ignore
 from open_webdriver import open_webdriver  # type: ignore
 
+from givesendgoscraper.asyncwrap import asyncwrap
+
 
 def _parse_html(text: str) -> dict[str, str]:
     """Parsed the html after it has been scraped."""
@@ -53,6 +55,12 @@ def scrape_givesendgo(gsg_id: str) -> dict:
     text = _get_html(gsg_id)
     data = _parse_html(text)
     return data
+
+
+@asyncwrap
+def async_scrape_givesendgo(gsg_id: str) -> dict:
+    """Scrape the givesendgo page."""
+    return scrape_givesendgo(gsg_id)
 
 
 def main() -> dict:

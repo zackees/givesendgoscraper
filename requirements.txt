@@ -1,8 +1,4 @@
 fastapi
 uvicorn[standard]
-keyvalue-sqlite==1.0.4
-peewee==3.15.2
-peewee_extra_fields==2.8.2
 beautifulsoup4
-requests
 open-webdriver==1.3.3
