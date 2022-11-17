@@ -14,7 +14,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, JSONResponse
 
 from givesendgoscraper.scraper import scrape_givesendgo
-from givesendgoscraper.scraper_task import scraper_task, get_campaign_data, CampaignData
+from givesendgoscraper.scraper_task import (
+    scraper_task, get_campaign_data, trigger_scrape, CampaignData
+)
 from givesendgoscraper.version import VERSION
 
 STARTUP_DATETIME = datetime.now()
@@ -84,6 +86,7 @@ async def get() -> JSONResponse:
     """Get's the current campaign data."""
     try:
         data: CampaignData = get_campaign_data()
+        trigger_scrape()
         return JSONResponse(
             status_code=200, content={"goal": data.goal, "raised": data.raised}
         )
