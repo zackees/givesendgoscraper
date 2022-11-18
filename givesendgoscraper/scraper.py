@@ -34,6 +34,7 @@ def _parse_raised_goal(text: str) -> dict[str, str]:
             data["raised"] = raised
     return data
 
+
 def _parse_number_donars(text: str) -> str:
     """Parsed the html after it has been scraped."""
     soup = BeautifulSoup(text, "html.parser")
@@ -45,6 +46,7 @@ def _parse_number_donars(text: str) -> str:
             return text
     print("Error could not find number of donars")
     return ""
+
 
 def _get_html(gsg_id: str) -> str:
     """Scrape the givesendgo page."""

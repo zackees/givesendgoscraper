@@ -15,7 +15,10 @@ from fastapi.responses import RedirectResponse, JSONResponse
 
 from givesendgoscraper.scraper import scrape_givesendgo
 from givesendgoscraper.scraper_task import (
-    scraper_task, get_campaign_data, trigger_scrape, CampaignData
+    scraper_task,
+    get_campaign_data,
+    trigger_scrape,
+    CampaignData,
 )
 from givesendgoscraper.version import VERSION
 
@@ -28,7 +31,6 @@ GIVE_SEND_GO_ID = os.environ.get("GIVE_SEND_GO_ID", "maryamhenein")
 def app_description() -> str:
     """Get the app description."""
     lines = []
-    lines.append("# Givesendgoscraper")
     lines.append("  * Version: " + VERSION)
     lines.append("  * Started at: " + str(STARTUP_DATETIME))
     if IS_TEST:
@@ -38,7 +40,7 @@ def app_description() -> str:
 
 
 app = FastAPI(
-    title="Video Server",
+    title="Givesendgoscraper",
     version=VERSION,
     redoc_url=None,
     license_info={
@@ -87,9 +89,7 @@ async def get() -> JSONResponse:
     try:
         data: CampaignData = get_campaign_data()
         trigger_scrape()
-        return JSONResponse(
-            status_code=200, content=data.to_json()
-        )
+        return JSONResponse(status_code=200, content=data.to_json())
     except Exception as e:  # pylint: disable=broad-except
         stack_trace = traceback.format_exc()
         payload = {
