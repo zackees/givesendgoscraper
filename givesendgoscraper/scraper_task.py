@@ -16,6 +16,16 @@ class CampaignData:
 
     goal: str = ""
     raised: str = ""
+    donors: str = ""
+
+    # converter to json
+    def to_json(self) -> dict:
+        """Convert to json."""
+        return {
+            "goal": self.goal,
+            "raised": self.raised,
+            "donors": self.donors,
+        }
 
 
 CAMPAIGN_DATA = CampaignData()
@@ -41,6 +51,8 @@ async def scraper_task(gsg_id) -> None:
             data = scrape_givesendgo(gsg_id)
             CAMPAIGN_DATA.goal = data["goal"]
             CAMPAIGN_DATA.raised = data["raised"]
+            CAMPAIGN_DATA.donors = data["donors"]
+
         except Exception as exc:  # pylint: disable=broad-except
             print(exc)
         long_future_time = time.time() + DEFAULT_SLEEP

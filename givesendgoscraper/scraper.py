@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup  # type: ignore
 from open_webdriver import open_webdriver  # type: ignore
 
 
-def _parse_html(text: str) -> dict[str, str]:
+def _parse_raised_goal(text: str) -> dict[str, str]:
     """Parsed the html after it has been scraped."""
     soup = BeautifulSoup(text, "html.parser")
     dom = soup.find("div", class_="donation-amount-section")
@@ -34,6 +34,17 @@ def _parse_html(text: str) -> dict[str, str]:
             data["raised"] = raised
     return data
 
+def _parse_number_donars(text: str) -> str:
+    """Parsed the html after it has been scraped."""
+    soup = BeautifulSoup(text, "html.parser")
+    doms = soup.find_all("a", class_="btn btn-style-4 w-100")
+    for dom in doms:
+        text = dom.text
+        if "Give" in text:
+            text = text.replace("Give", "").replace("\n", "").strip()
+            return text
+    print("Error could not find number of donars")
+    return ""
 
 def _get_html(gsg_id: str) -> str:
     """Scrape the givesendgo page."""
@@ -52,7 +63,8 @@ def _get_html(gsg_id: str) -> str:
 def scrape_givesendgo(gsg_id: str) -> dict:
     """Scrape the givesendgo page."""
     text = _get_html(gsg_id)
-    data = _parse_html(text)
+    data = _parse_raised_goal(text)
+    data["donors"] = _parse_number_donars(text)
     return data
 
 

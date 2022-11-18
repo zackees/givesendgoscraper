@@ -15,5 +15,6 @@ class GenerateFilesTester(unittest.TestCase):
         self.assertIn("goal", data)
         self.assertIn("raised", data)
 
+
 if __name__ == "__main__":
     unittest.main()

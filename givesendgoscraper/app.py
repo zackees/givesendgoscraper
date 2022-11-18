@@ -88,7 +88,7 @@ async def get() -> JSONResponse:
         data: CampaignData = get_campaign_data()
         trigger_scrape()
         return JSONResponse(
-            status_code=200, content={"goal": data.goal, "raised": data.raised}
+            status_code=200, content=data.to_json()
         )
     except Exception as e:  # pylint: disable=broad-except
         stack_trace = traceback.format_exc()
