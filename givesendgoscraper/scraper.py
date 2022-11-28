@@ -6,6 +6,13 @@ from bs4 import BeautifulSoup  # type: ignore
 from open_webdriver import open_webdriver  # type: ignore
 
 
+def _add_dollar_sign_if_missing(number: str) -> str:
+    """Add a dollar sign to a number."""
+    if "$" in number:
+        return number  # Dollar sign already added.
+    return f"${number}"
+
+
 def _parse_raised_goal(text: str) -> dict[str, str]:
     """Parsed the html after it has been scraped."""
     soup = BeautifulSoup(text, "html.parser")
@@ -13,7 +20,6 @@ def _parse_raised_goal(text: str) -> dict[str, str]:
     assert dom is not None
     # There are lots of spaces and newlines in the HTML, so we need to strip them
     text = dom.text
-
     lines = text.split("\n")
     lines = [line.strip() for line in lines if line.strip()]
     text = "\n".join(lines)
@@ -31,11 +37,11 @@ def _parse_raised_goal(text: str) -> dict[str, str]:
         if "goal" in piece_lower:
             items = piece.split(":")
             goal = items[1].strip()
-            data["goal"] = goal
+            data["goal"] = _add_dollar_sign_if_missing(goal)
         if "raised" in piece_lower:
             items = piece.split(":")
             raised = items[1].strip()
-            data["raised"] = raised
+            data["raised"] = _add_dollar_sign_if_missing(raised)
     return data
 
 
