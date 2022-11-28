@@ -49,9 +49,9 @@ async def scraper_task(gsg_id) -> None:
     while True:
         try:
             data = scrape_givesendgo(gsg_id)
-            CAMPAIGN_DATA.goal = data["goal"]
-            CAMPAIGN_DATA.raised = data["raised"]
-            CAMPAIGN_DATA.donors = data["donors"]
+            CAMPAIGN_DATA.goal = data.get("goal", "")
+            CAMPAIGN_DATA.raised = data.get("raised", "")
+            CAMPAIGN_DATA.donors = data.get("donors", "")
 
         except Exception as exc:  # pylint: disable=broad-except
             print(exc)

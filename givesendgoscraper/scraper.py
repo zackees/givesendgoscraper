@@ -13,6 +13,10 @@ def _parse_raised_goal(text: str) -> dict[str, str]:
     assert dom is not None
     # There are lots of spaces and newlines in the HTML, so we need to strip them
     text = dom.text
+
+    lines = text.split("\n")
+    lines = [line.strip() for line in lines if line.strip()]
+    text = "\n".join(lines)
     text = text.replace(" :", ":")
     text = text.replace(":\n", ":")
     text = text.replace("$ ", "$")
@@ -51,12 +55,7 @@ def _parse_number_donars(text: str) -> str:
 def _get_html(gsg_id: str) -> str:
     """Scrape the givesendgo page."""
     url = f"https://www.givesendgo.com/{gsg_id}"
-    user_agent = (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-        " AppleWebKit/537.36 (KHTML, like Gecko)"
-        " Chrome/107.0.0.0 Safari/537.36"
-    )
-    with open_webdriver(user_agent=user_agent) as driver:
+    with open_webdriver(headless=False) as driver:
         driver.get(url)
         # print driver.page_source
         return driver.page_source
