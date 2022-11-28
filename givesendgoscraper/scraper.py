@@ -61,7 +61,7 @@ def _parse_number_donars(text: str) -> str:
 def _get_html(gsg_id: str) -> str:
     """Scrape the givesendgo page."""
     url = f"https://www.givesendgo.com/{gsg_id}"
-    with open_webdriver(headless=False) as driver:
+    with open_webdriver() as driver:
         driver.get(url)
         # print driver.page_source
         return driver.page_source

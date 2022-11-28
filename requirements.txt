@@ -1,4 +1,4 @@
 fastapi
 uvicorn[standard]
 beautifulsoup4
-open-webdriver==1.4.0
+open-webdriver==1.4.1
