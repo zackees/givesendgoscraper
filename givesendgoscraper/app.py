@@ -7,6 +7,7 @@
 import asyncio
 import os
 import traceback
+import json
 from datetime import datetime
 
 from fastapi import FastAPI
@@ -18,7 +19,6 @@ from givesendgoscraper.scraper_task import (
     scraper_task,
     get_campaign_data,
     trigger_scrape,
-    CampaignData,
 )
 from givesendgoscraper.version import VERSION
 
@@ -87,9 +87,10 @@ async def favicon() -> RedirectResponse:
 async def get() -> JSONResponse:
     """Get's the current campaign data."""
     try:
-        data: CampaignData = get_campaign_data()
+        data: dict[str, str | list] = get_campaign_data()
         trigger_scrape()
-        return JSONResponse(status_code=200, content=data.to_json())
+        json_data = json.dumps(data)
+        return JSONResponse(status_code=200, content=json_data)
     except Exception as e:  # pylint: disable=broad-except
         stack_trace = traceback.format_exc()
         payload = {

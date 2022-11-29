@@ -3,36 +3,16 @@ Periodically scrapes the given givesendgo campaign and saves the data to a datab
 """
 import asyncio
 import time
-from dataclasses import dataclass
 from givesendgoscraper.scraper import scrape_givesendgo
 
 FAST_SLEEP = 60 * 10  # Every 10 mins
 DEFAULT_SLEEP = 60 * 60 * 4  # Every 4 hours
 
-
-@dataclass
-class CampaignData:
-    """Campaign data."""
-
-    goal: str = ""
-    raised: str = ""
-    donors: str = ""
-
-    # converter to json
-    def to_json(self) -> dict:
-        """Convert to json."""
-        return {
-            "goal": self.goal,
-            "raised": self.raised,
-            "donors": self.donors,
-        }
-
-
-CAMPAIGN_DATA = CampaignData()
+CAMPAIGN_DATA: dict[str, str | list] = {}
 TRIGGERED = False
 
 
-def get_campaign_data() -> CampaignData:
+def get_campaign_data() -> dict[str, str | list]:
     """Get the campaign data."""
     return CAMPAIGN_DATA
 
@@ -45,14 +25,11 @@ def trigger_scrape() -> None:
 
 async def scraper_task(gsg_id) -> None:
     """Periodically scrapes the given givesendgo campaign and saves the data to a database."""
-    global TRIGGERED  # pylint: disable=global-statement
+    global TRIGGERED, CAMPAIGN_DATA  # pylint: disable=global-statement
     while True:
         try:
-            data = scrape_givesendgo(gsg_id)
-            CAMPAIGN_DATA.goal = data.get("goal", "")
-            CAMPAIGN_DATA.raised = data.get("raised", "")
-            CAMPAIGN_DATA.donors = data.get("donors", "")
-
+            data: dict[str, str | list] = scrape_givesendgo(gsg_id)
+            CAMPAIGN_DATA = data
         except Exception as exc:  # pylint: disable=broad-except
             print(exc)
         long_future_time = time.time() + DEFAULT_SLEEP

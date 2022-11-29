@@ -46,7 +46,7 @@ def _parse_raised_goal(text: str) -> dict[str, str]:
 
 
 def _parse_number_donars(text: str) -> str:
-    """Parsed the html after it has been scraped."""
+    """Parsed the total number of donors."""
     soup = BeautifulSoup(text, "html.parser")
     doms = soup.find_all("a", class_="btn btn-style-4 w-100")
     for dom in doms:
@@ -58,6 +58,27 @@ def _parse_number_donars(text: str) -> str:
     return ""
 
 
+def _parse_recent_donations(text: str) -> list[dict[str, list]]:
+    """Parse the recent donations"""
+    soup = BeautifulSoup(text, "html.parser")
+    container = soup.find("ul", class_="donatecount")
+    doms = container.find_all("li")
+    donations: list[dict[str, list]] = []
+    for dom in doms:
+        name = dom.find("h3").text.strip()
+        amount = dom.find("div", class_="amount").text.replace("USD", "").strip().replace("$ ", "$")
+        when = dom.find("p").text.strip()
+        comment = dom.find("em").text.strip()
+        donation = {
+            "name": name,
+            "amount": amount,
+            "when": when,
+            "comment": comment,
+        }
+        donations.append(donation)
+    return donations
+
+
 def _get_html(gsg_id: str) -> str:
     """Scrape the givesendgo page."""
     url = f"https://www.givesendgo.com/{gsg_id}"
@@ -67,11 +88,13 @@ def _get_html(gsg_id: str) -> str:
         return driver.page_source
 
 
-def scrape_givesendgo(gsg_id: str) -> dict:
+def scrape_givesendgo(gsg_id: str) -> dict[str, str | list]:
     """Scrape the givesendgo page."""
     text = _get_html(gsg_id)
-    data = _parse_raised_goal(text)
+    data: dict[str, str | list] = {}
+    data.update(_parse_raised_goal(text))
     data["donors"] = _parse_number_donars(text)
+    data["recent_donations"] = _parse_recent_donations(text)
     return data
 
 
