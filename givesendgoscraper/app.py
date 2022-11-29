@@ -89,8 +89,7 @@ async def get() -> JSONResponse:
     try:
         data: dict[str, str | list] = get_campaign_data()
         trigger_scrape()
-        json_data = json.dumps(data)
-        return JSONResponse(status_code=200, content=json_data)
+        return JSONResponse(status_code=200, content=data)
     except Exception as e:  # pylint: disable=broad-except
         stack_trace = traceback.format_exc()
         payload = {
