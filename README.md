@@ -8,5 +8,5 @@
 
   1. Use Render.com, DigitalOcean or similar docker host
   2. Select this github repo
-  3. Set the environmental variable `GIVE_SEND_GO_ID=<ID>`
-    3a. For example in https://www.givesendgo.com/BlastVideo, `BlastVideo` is the the <ID>
+  3. Set the environmental variable `GIVE_SEND_GO_ID=<ID>` example:
+![image](https://user-images.githubusercontent.com/6856673/204921911-18a2899e-7c59-461c-9f26-d16d713f43cb.png)
