@@ -65,8 +65,9 @@ def startup_event() -> None:
         """Run the task."""
         await scraper_task(GIVE_SEND_GO_ID)
 
-    # run the task in the background
-    asyncio.create_task(task())
+    # run the task in the background, we save a reference because
+    # asyncio.create_task only holds a weak reference to the task.
+    startup_event.__dict__["task"] = asyncio.create_task(task())
 
 
 @app.get("/", include_in_schema=False)
